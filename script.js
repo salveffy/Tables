@@ -4,6 +4,8 @@ fetch('/JSON/data.json')
   .then((data) => {
     console.log(data);
     addHeadersListener();
+    buttCancelEvent()
+    buttCorrectEvent()
     addButton(data);
     addButList(data);
   });
@@ -13,9 +15,13 @@ const container = document.querySelector('div.container');
 const table = document.querySelector('.table_dark');
 const headers = table.querySelectorAll('th');
 const tbody = table.querySelector('tbody');
+const butCancel = document.querySelector('.cancel');
+const butCorrect = document.querySelector('.correct');
+const form = document.getElementById('form');
 
 const notesOnPage = 10; // количество строк на странице
 let active; // переменная для определения активной страницы
+let idStroke; // переменная для выноса id строки
 
 // Направление сортировки
 const flows = Array.from(headers).map(function(header) {
@@ -41,7 +47,8 @@ function renderAllLines(linesList) {
 function listItem({id, about, eyeColor, name: { firstName, lastName } } = {}) {
   const tableTr = document.createElement('tr');
   tableTr.setAttribute('id',id);
-  tableTr.addEventListener('click', function(e){ // Добавление слушателя для редактирования данных
+  tableTr.classList.add('hopa')
+  tableTr.addEventListener('click', function(){ // Добавление слушателя для редактирования данных
     console.log()
     editForm(id, about, eyeColor, firstName, lastName);
   });
@@ -71,8 +78,23 @@ function addHeadersListener() {
   [].forEach.call(headers, function (header, id) {
     header.addEventListener('click', function () {
       sortCol(id);
+      console.log(header)
     });
   });
+}
+//Добавление слушателя на кнопку отмены
+function buttCancelEvent() {
+  butCancel.addEventListener('click', function() {
+    form.setAttribute('style','display:none;');
+    console.log('dasdas')
+  })
+}
+//Добавление слушателя на кнопку сохранения
+function buttCorrectEvent(){
+  butCorrect.addEventListener('click', function() {
+    saveInfo(idStroke)
+    form.setAttribute('style','display:none;');
+  })
 }
 
 //Функция сортировки
@@ -110,35 +132,25 @@ function sortCol(id) {
 }
 
 function editForm(id, about, eyeColor, firstName, lastName) { // Редактирование данных
-  const form = document.getElementById('form');
   const name = document.getElementById('firstName');
   const lName = document.getElementById('lastName');
   const aboutDesc = document.getElementById('about');
   const eyeColr = document.getElementById('eyeColor');
-  const butCancel = document.querySelector('.cancel');
-  const butCorrect = document.querySelector('.correct')
+  idStroke = id;
   form.setAttribute('style','display:flex;');
   name.value = firstName;
   lName.value = lastName;
   aboutDesc.value = about;
   eyeColr.value = eyeColor;
-  butCancel.addEventListener('click', function() {
-    form.setAttribute('style','display:none;');
-  })
-  butCorrect.addEventListener('click', function() {
-    saveInfo(id)
-    form.setAttribute('style','display:none;');
-  })
 }
 
-function saveInfo(id) {// TODO: Остановился тут
+function saveInfo(id) { // Сохранение информации
   let rowTr = document.getElementById(id);
   let allTd = rowTr.querySelectorAll('td');
-  allTd[0].setAttribute('value',document.getElementById('firstName').value );
+  allTd[0].textContent = document.getElementById('firstName').value ;
   allTd[1].textContent = document.getElementById('lastName').value;
-  allTd[2].setAttribute = document.getElementById('about').value;
-  allTd[3].setAttribute = document.getElementById('eyeColor').value;
-  console.log(...allTd);
+  allTd[2].textContent = document.getElementById('about').value;
+  allTd[3].textContent = document.getElementById('eyeColor').value;
 }
 
 function addButton(data) { // Добавление кнопок пагинации
