@@ -5,50 +5,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
-    <script src="./script.js"></script>
     <title>Document</title>
   </head>
   <body>
     <div class="content">
       <div class="container">
         <table class="table_dark">
-          <tr>
-            <th>Class name</th>
-            <th>Type</th>
-            <th>Hours</th>
-            <th>Trainer</th>
-            <th>Spots</th>
-          </tr>
-          <tr>
-            <td>Like a butterfly</td>
-            <td>Boxing</td>
-            <td>9:00 AM - 11:00 AM</td>
-            <td>Aaron Chapman</td>
-            <td>10</td>
-          </tr>
-          <tr>
-            <td>Google</td>
-            <td>50.2</td>
-            <td>40.63</td>
-            <td>45.23</td>
-            <td>39.3</td>
-          </tr>
-          <tr>
-            <td>Apple</td>
-            <td>25.4</td>
-            <td>30.2</td>
-            <td>33.3</td>
-            <td>36.7</td>
-          </tr>
-          <tr>
-            <td>IBM</td>
-            <td>20.4</td>
-            <td>15.6</td>
-            <td>22.3</td>
-            <td>29.3</td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Описание</th>
+              <th>Цвет глаз</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
         </table>
       </div>
     </div>
+    <div id="form" class="content nun"> <!--Форма для редактирования-->
+    <div class="container">
+    <table class="table_dark">
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Фамилия</th>
+          <th>Описание</th>
+          <th>Цвет глаз</th>
+        </tr>
+      </thead>
+      <tbody>
+        <td><input id="firstName" type="text"></input></td>
+        <td><input id="lastName" type="text"></input></td>
+        <td><textarea id="about" type="text"></textarea></td>
+        <td><input id="eyeColor" type="text"></input></td>
+  </tbody>
+  </table>
+    <div class="pagination">
+      <li class="correct">Сохранить</li>
+      <li class="cancel">Отменить</li>
+    </div>
+</div>
+</div>
+    <script src="./script.js"></script>
   </body>
 </html>
