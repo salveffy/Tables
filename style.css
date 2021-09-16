@@ -65,12 +65,16 @@ h2 {
   text-align: center;
 }
 
+
+
 .table_dark td:nth-of-type(3) {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+
 
 .pagination a, li {
   color: #808080;
@@ -106,4 +110,18 @@ input, textarea {
 textarea{
   width:1100px;
 
+}
+
+.blockVis {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  margin-left: -60%;
+  margin-top: -22%;
+}
+
+.eyeColor {
+  border-radius: 40px;
+  width: 50%;
+  margin-left: 25%;
 }
