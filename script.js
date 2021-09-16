@@ -3,7 +3,7 @@ fetch('/JSON/data.json')
   .then((response) => response.json())
   .then((data) => {
     console.log(data);
-    addHeadersListener();
+    addHeadersListener(data);
     buttCancelEvent();
     buttCorrectEvent(data);
     buttColumnsEvent();
@@ -23,6 +23,7 @@ const ulBut = document.querySelector('ul');
 const butColumns = ulBut.querySelectorAll('li');
 
 const notesOnPage = 10; // количество строк на странице
+let pageNum;
 let active; // переменная для определения активной страницы
 let nameLine = []; // переменная для выноса id строки
 
@@ -90,10 +91,10 @@ function listItem({ id, about, eyeColor, name: { firstName, lastName } } = {}) {
 }
 
 //Добавление слушателелей на заголовки таблицы
-function addHeadersListener() {
+function addHeadersListener(data) {
   [].forEach.call(headers, function (header, id) {
     header.addEventListener('click', function () {
-      sortCol(id);
+      sortCol(id,data);
     });
   });
 }
@@ -126,7 +127,6 @@ function buttColumnsEvent() {
 //TODO: Сделать адекватную функцию
 //С помощью id передаем название функции в массив и потом с помощью этого массива сортируем переменную notes в showPages
 function unshowColumns(butColumn, id) {
-  nameLine.push(id);
   console.log(changeBut);
   if (changeBut) {
     console.log(butColumn);
@@ -147,15 +147,16 @@ function unshowColumns(butColumn, id) {
 }
 
 //Функция сортировки
-function sortCol(id) {
-  const flow = flows[id] || 'asc'; // Получение текущего направления
+function sortCol(head, data) {
+  const flow = flows[head] || 'asc'; // Получение текущего направления
   const mult = flow === 'asc' ? 1 : -1;
-  const rows = tbody.querySelectorAll('tr');
-  const newArr = Array.from(rows);
-
-  newArr.sort(function (a, b) {
-    const cellA = a.querySelectorAll('td')[id].innerHTML;
-    const cellB = b.querySelectorAll('td')[id].innerHTML;
+  data.sort(function (a, b) {
+    let cellA;
+    let cellB;
+    if (head === 0) {cellA = a.name.firstName; cellB = b.name.firstName;}
+    else if (head === 1) {cellA = a.name.lastName;cellB = b.name.lastName;}
+    else if (head === 2) {cellA = a.about;cellB = b.about;}
+    else if (head === 3) {cellA = a.eyeColor;cellB = b.eyeColor;}
     switch (true) {
       case cellA > cellB:
         return 1 * mult;
@@ -166,18 +167,15 @@ function sortCol(id) {
     }
   });
 
-  // Удаление старых строк
-  [].forEach.call(rows, function (row) {
-    tbody.removeChild(row);
-  });
-
   // Изменение направления
-  flows[id] = flow === 'asc' ? 'desc' : 'asc';
+  flows[head] = flow === 'asc' ? 'desc' : 'asc';
 
   // Добавление новых строк
-  newArr.forEach(function (newItem) {
-    tbody.appendChild(newItem);
-  });
+  let start = (pageNum - 1) * notesOnPage;
+  let end = start + notesOnPage;
+  let notes = data.slice(start, end);
+  tbody.innerHTML = '';
+  renderAllLines(notes);
 }
 
 function editForm(id, about, eyeColor, firstName, lastName) {
@@ -243,12 +241,11 @@ function addButList(data) {
     }
     active = index;
     index.classList.add('active');
-    let pageNum = +index.innerHTML;
+    pageNum = +index.innerHTML;
     let start = (pageNum - 1) * notesOnPage;
     let end = start + notesOnPage;
     let notes = data.slice(start, end);
     tbody.innerHTML = ''; // очищение таблицы от строк
-    console.log(notes);
     renderAllLines(notes); // функция добавления строк
   }
 }
