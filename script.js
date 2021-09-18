@@ -1,5 +1,5 @@
 //получаем данные из JSON
-fetch('/JSON/data.json')
+fetch('https://raw.githubusercontent.com/salveffy/Tables/main/JSON/data.json')
   .then((response) => response.json())
   .then((data) => {
     addHeadersListener(data);
