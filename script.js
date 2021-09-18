@@ -2,11 +2,10 @@
 fetch('/JSON/data.json')
   .then((response) => response.json())
   .then((data) => {
-    console.log(data);
     addHeadersListener(data);
     buttCancelEvent();
     buttCorrectEvent(data);
-    buttColumnsEvent();
+    buttColumnsEvent(data);
     addButton(data);
     addButList(data);
   });
@@ -23,9 +22,11 @@ const ulBut = document.querySelector('ul');
 const butColumns = ulBut.querySelectorAll('li');
 
 const notesOnPage = 10; // количество строк на странице
-let pageNum;
+let pageNum; // переменная с открытым номером страницы
+let checkPage; // переменная для проверки страницы
 let active; // переменная для определения активной страницы
-let nameLine = []; // переменная для выноса id строки
+let idStroke; // переменная для выноса id строки
+let nameArr = []; // массив с помощью которого происходит выбор отображаемых столбцов
 
 // Направление сортировки
 const flows = Array.from(headers).map(function (header) {
@@ -40,53 +41,61 @@ function renderAllLines(linesList) {
     return;
   }
   const fragment = document.createDocumentFragment();
-  Object.values(linesList).forEach((line) => {
+  Object.values(linesList).forEach((line) => { // Создание строки для каждого объекта
     const tableTr = listItem(line);
     fragment.appendChild(tableTr);
   });
-  tbody.appendChild(fragment);
+  tbody.appendChild(fragment); //Вставляем строки в тело таблицы
 }
 
 //Создание элементов
-function listItem({ id, about, eyeColor, name: { firstName, lastName } } = {}) {
+function listItem(data) {
+  let {
+    id,
+    about,
+    eyeColor,
+    name: { firstName, lastName },
+  } = data; //Деструктаризация данных
   const tableTr = document.createElement('tr');
   tableTr.setAttribute('id', id);
   tableTr.addEventListener('click', function () {
     // Добавление слушателя для редактирования данных
-    console.log();
-    editForm(id, about, eyeColor, firstName, lastName);
+    editForm(data);
   });
+//Проверка массива на неотображаемые колонки
+  if (!nameArr.includes(0)) {
+    const firstNameTd = document.createElement('td'); //Создание ячейки с именем
+    firstNameTd.classList.add('firstName');
+    firstNameTd.textContent = firstName;
+    tableTr.appendChild(firstNameTd);
+  }
 
-  const firstNameTd = document.createElement('td');
-  firstNameTd.classList.add('firstName');
-  firstNameTd.textContent = firstName;
+  if (!nameArr.includes(1)) {
+    const lastNameTd = document.createElement('td'); //Создание ячейки с фамилией
+    lastNameTd.classList.add('lastName');
+    lastNameTd.textContent = lastName;
+    tableTr.appendChild(lastNameTd);
+  }
 
-  const lastNameTd = document.createElement('td');
-  lastNameTd.classList.add('lastName');
-  lastNameTd.textContent = lastName;
+  if (!nameArr.includes(2)) {
+    const aboutTd = document.createElement('td'); //Создание ячейки с описанием
+    aboutTd.classList.add('about');
+    aboutTd.textContent = about;
+    tableTr.appendChild(aboutTd);
+  }
 
-  const aboutTd = document.createElement('td');
-  aboutTd.classList.add('about');
-  aboutTd.textContent = about;
-
-  const eyeColorSpan = document.createElement('span')
-  eyeColorSpan.textContent = eyeColor;
-  eyeColorSpan.style.color = eyeColor;
-
-  const eyeColorDiv = document.createElement('div')
-  eyeColorDiv.style.backgroundColor = eyeColor;
-  eyeColorDiv.classList.add('eyeColor');
-
-  const eyeColorTd = document.createElement('td');
-
-
-  eyeColorDiv.appendChild(eyeColorSpan)
-  eyeColorTd.appendChild(eyeColorDiv);
-  tableTr.appendChild(firstNameTd);
-  tableTr.appendChild(lastNameTd);
-  tableTr.appendChild(aboutTd);
-  tableTr.appendChild(eyeColorTd);
-
+  if (!nameArr.includes(3)) {
+    const eyeColorSpan = document.createElement('span'); //Создание ячейки с цветом глаз
+    eyeColorSpan.textContent = eyeColor;
+    eyeColorSpan.style.color = eyeColor;
+    const eyeColorDiv = document.createElement('div');
+    eyeColorDiv.style.backgroundColor = eyeColor;
+    eyeColorDiv.classList.add('eyeColor');
+    const eyeColorTd = document.createElement('td');
+    eyeColorDiv.appendChild(eyeColorSpan);
+    eyeColorTd.appendChild(eyeColorDiv);
+    tableTr.appendChild(eyeColorTd);
+  }
   return tableTr;
 }
 
@@ -94,7 +103,7 @@ function listItem({ id, about, eyeColor, name: { firstName, lastName } } = {}) {
 function addHeadersListener(data) {
   [].forEach.call(headers, function (header, id) {
     header.addEventListener('click', function () {
-      sortCol(id,data);
+      sortCol(id, data);
     });
   });
 }
@@ -102,44 +111,44 @@ function addHeadersListener(data) {
 function buttCancelEvent() {
   butCancel.addEventListener('click', function () {
     form.setAttribute('style', 'display:none;');
-    console.log('dasdas');
   });
 }
 //Добавление слушателя на кнопку сохранения
 function buttCorrectEvent(data) {
   butCorrect.addEventListener('click', function () {
-    saveInfo(data);
+    saveInfo(idStroke, data);
     form.setAttribute('style', 'display:none;');
   });
 }
 
-let changeBut = false;
-
 //Добавления слушателей на кнопки отображения столбцов
-function buttColumnsEvent() {
+function buttColumnsEvent(data) {
   [].forEach.call(butColumns, function (butColumn, id) {
     butColumn.addEventListener('click', function () {
-      changeBut = !changeBut;
-      unshowColumns(butColumn, id);
+      unshowColumns(butColumn, id, data);
     });
   });
 }
-//TODO: Сделать адекватную функцию
-//С помощью id передаем название функции в массив и потом с помощью этого массива сортируем переменную notes в showPages
-function unshowColumns(butColumn, id) {
-  console.log(changeBut);
-  if (changeBut) {
-    console.log(butColumn);
+//Функция для скрытия/отображения колонок
+function unshowColumns(butColumn, id, data) {
+  if (butColumn.classList.contains('active')) { // если у элемента есть класс active
+    nameArr.push(id); // добавляем id колонки в массив
+    checkPage = pageNum; // записываем текущую страницу пагинации
     butColumn.classList.remove('active');
-    headers[id].setAttribute('style', 'display:none');
-    const trStroke = tbody.querySelectorAll('td:nth-of-type(' + (id + 1) + ')');
+    headers[id].setAttribute('style', 'display:none'); // скрываем заголовок
+    const trStroke = tbody.querySelectorAll('td:nth-of-type(' + (id + 1) + ')'); // скрываем все ячейки нужной нам колонки
     trStroke.forEach.call(trStroke, function (td) {
       td.style.display = 'none';
     });
-  } else {
+  } else if (!butColumn.classList.contains('active')) { // если у элемента нет класса active
+    const index = nameArr.indexOf(id);
+    nameArr.splice(index, 1); // удаляем id колонки из массива, так как она теперь отображается
+    if (checkPage !== pageNum) { // проверка на той же ли странице, нажали на кнопку отображения столбца
+      renderPage(data) //Заново рендерим страницу
+    }
     butColumn.classList.add('active');
-    headers[id].setAttribute('style', 'display:');
-    const trStroke = tbody.querySelectorAll('td:nth-of-type(' + (id + 1) + ')');
+    headers[id].setAttribute('style', 'display:'); //отображаем заголовки
+    const trStroke = tbody.querySelectorAll('td:nth-of-type(' + (id + 1) + ')'); // показываем все ячейки нужной нам колонки
     trStroke.forEach.call(trStroke, function (td) {
       td.style.display = '';
     });
@@ -150,13 +159,22 @@ function unshowColumns(butColumn, id) {
 function sortCol(head, data) {
   const flow = flows[head] || 'asc'; // Получение текущего направления
   const mult = flow === 'asc' ? 1 : -1;
-  data.sort(function (a, b) {
+  data.sort(function (a, b) { //сортируем массив объектов
     let cellA;
     let cellB;
-    if (head === 0) {cellA = a.name.firstName; cellB = b.name.firstName;}
-    else if (head === 1) {cellA = a.name.lastName;cellB = b.name.lastName;}
-    else if (head === 2) {cellA = a.about;cellB = b.about;}
-    else if (head === 3) {cellA = a.eyeColor;cellB = b.eyeColor;}
+    if (head === 0) {
+      cellA = a.name.firstName;
+      cellB = b.name.firstName;
+    } else if (head === 1) {
+      cellA = a.name.lastName;
+      cellB = b.name.lastName;
+    } else if (head === 2) {
+      cellA = a.about;
+      cellB = b.about;
+    } else if (head === 3) {
+      cellA = a.eyeColor;
+      cellB = b.eyeColor;
+    }
     switch (true) {
       case cellA > cellB:
         return 1 * mult;
@@ -171,40 +189,49 @@ function sortCol(head, data) {
   flows[head] = flow === 'asc' ? 'desc' : 'asc';
 
   // Добавление новых строк
-  let start = (pageNum - 1) * notesOnPage;
-  let end = start + notesOnPage;
-  let notes = data.slice(start, end);
-  tbody.innerHTML = '';
-  renderAllLines(notes);
+  renderPage(data);
 }
 
-function editForm(id, about, eyeColor, firstName, lastName) {
+function editForm(data) {
   // Редактирование данных
+  let {
+    id,
+    about,
+    eyeColor,
+    name: { firstName, lastName },
+  } = data; //Деструктаризация данных
   const name = document.getElementById('firstName');
   const lName = document.getElementById('lastName');
   const aboutDesc = document.getElementById('about');
   const eyeColr = document.getElementById('eyeColor');
-  form.setAttribute('style', 'display:flex;');
+  form.setAttribute('style', 'display:flex;'); //Заполняем форму данными
   name.value = firstName;
   lName.value = lastName;
   aboutDesc.value = about;
   eyeColr.value = eyeColor;
+  idStroke = id;
 }
-
-function saveInfo(id, data) {  // Сохранение информации
-  let rowTr = document.getElementById(id); // Изменение значения сразу в строке
+// Сохранение информации
+function saveInfo(id, data) {
+  // Изменение значения сразу в строке
+  let rowTr = document.getElementById(id);
   let allTd = rowTr.querySelectorAll('td');
   allTd[0].textContent = document.getElementById('firstName').value;
   allTd[1].textContent = document.getElementById('lastName').value;
   allTd[2].textContent = document.getElementById('about').value;
-  allTd[3].textContent = document.getElementById('eyeColor').value;
-  data.forEach(element => { // Сохранение измененных данных в data
-    if(element.id === id) {
+  allTd[3].querySelector('span').textContent =
+    document.getElementById('eyeColor').value;
+  allTd[3].querySelector('div').style.backgroundColor =
+    document.getElementById('eyeColor').value;
+  allTd[3].querySelector('span').style.color =
+    document.getElementById('eyeColor').value;
+  data.forEach((element) => {
+    // Сохранение измененных данных в data
+    if (element.id === id) {
       element.name.firstName = document.getElementById('firstName').value;
       element.name.lastName = document.getElementById('lastName').value;
       element.about = document.getElementById('about').value;
       element.eyeColor = document.getElementById('eyeColor').value;
-      console.log(element)
     }
   });
 }
@@ -215,7 +242,6 @@ function addButton(data) {
   pagination.classList.add('pagination');
   const arrData = Array.from(data);
   let counter = Math.ceil(arrData.length / notesOnPage);
-  console.log(container);
   for (let i = 1; i <= counter; i++) {
     let a = document.createElement('a');
     a.innerHTML = i;
@@ -234,18 +260,23 @@ function addButList(data) {
     });
   }
 
-  function showPages(index, data) {
-    // Алгоритм пагинации
-    if (active) {
-      active.classList.remove('active');
-    }
-    active = index;
-    index.classList.add('active');
-    pageNum = +index.innerHTML;
-    let start = (pageNum - 1) * notesOnPage;
-    let end = start + notesOnPage;
-    let notes = data.slice(start, end);
-    tbody.innerHTML = ''; // очищение таблицы от строк
-    renderAllLines(notes); // функция добавления строк
+}
+
+function showPages(index, data) {
+  // Алгоритм пагинации
+  if (active) {
+    active.classList.remove('active');
   }
+  active = index;
+  index.classList.add('active');
+  pageNum = +index.innerHTML;
+  renderPage(data);
+}
+
+function renderPage(data) { //Рендер одной страницы
+  let start = (pageNum - 1) * notesOnPage;
+  let end = start + notesOnPage;
+  let notes = data.slice(start, end);
+  tbody.innerHTML = ''; // очищение таблицы от строк
+  renderAllLines(notes); // функция добавления строк
 }

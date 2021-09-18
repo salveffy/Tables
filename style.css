@@ -4,11 +4,11 @@ body {
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   background-color: #19191d;
   font-weight: 300;
-  color:grey
+  color: grey;
 }
 
 * {
-  margin:0px;
+  margin: 0px;
   padding: 0px;
 }
 p {
@@ -22,11 +22,11 @@ h2 {
 }
 
 .content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 2%;
-
+display: grid;
+grid-template-columns: 2fr 4fr 2fr;
+grid-gap: 20px;
+margin:2%;
+grid-auto-flow: row;
 }
 
 .container {
@@ -39,17 +39,16 @@ h2 {
   justify-content: center;
   align-items: center;
   background-color: #393939;
-
 }
 
 .table_dark {
   border-collapse: collapse;
-  width:50vw;
+  width: 50vw;
 }
 
 .table_dark th {
-  color:#00ad5f;
-  font-size:15px;
+  color: #00ad5f;
+  font-size: 15px;
   line-height: 1.4;
   text-transform: uppercase;
   background-color: #393939;
@@ -59,65 +58,50 @@ h2 {
 
 .table_dark td {
   font-size: 15px;
-  color:#808080;
+  color: #808080;
   background-color: #222222;
-  padding:5px 5px;
+  padding: 5px 5px;
   text-align: center;
 }
 
-
-
-.table_dark td:nth-of-type(3) {
+.about {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-
-
-.pagination a, li {
+.pagination a,
+li {
   color: #808080;
   float: left;
   padding: 8px 16px;
   text-decoration: none;
-  transition: background-color .3s;
+  transition: background-color 0.3s;
   list-style-type: none;
 }
 
-.pagination a.active, li.active {
+.pagination a.active,
+li.active {
   background-color: #222222;
   color: #00ad5f;
 }
 
-.pagination a:hover:not(.active), li:hover:not(.active) {background-color: #222222;}
+.pagination a:hover:not(.active),
+li:hover:not(.active) {
+  background-color: #222222;
+}
 
 .nun {
   display: none;
 }
 
-input, textarea {
-  font-size: 15px;
-  background-color: #222222;
-  color: #808080;
-  border:2px solid #808080;
-  outline: none;
-  text-align: center;
-  height: 115px;
-  vertical-align:baseline;
-}
-
-textarea{
-  width:1100px;
-
-}
-
 .blockVis {
   display: flex;
-  position: absolute;
   flex-direction: column;
-  margin-left: -60%;
-  margin-top: -22%;
+  width: 120px;
+  margin-top: 14%;
+  justify-self: flex-end;
 }
 
 .eyeColor {
@@ -125,3 +109,90 @@ textarea{
   width: 50%;
   margin-left: 25%;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin:20px;
+}
+
+label {
+  color: #00ad5f;
+  font-size: 15px;
+  line-height: 1.4;
+  text-transform: uppercase;
+  background-color: #393939;
+  white-space: nowrap;
+  margin: 3%;
+}
+
+.cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 3%;
+}
+
+input,
+textarea {
+  font-size: 15px;
+  background-color: #222222;
+  color: #808080;
+  border: 2px solid #808080;
+  outline: none;
+  text-align: center;
+  vertical-align: baseline;
+}
+
+textarea {
+  height: 200px;
+  width: 350px;
+}
+
+@media (max-width: 500px) {
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row: 1fr 1fr 1fr;
+  grid-gap: 20px;
+  margin:2%;
+  grid-auto-flow: row;
+  }
+  .blockVis {
+    display: flex;
+    flex-direction: row;
+    justify-self: flex-start;
+    margin-left: 5%;
+    height: 40px;
+    white-space: nowrap;
+  }
+
+  .table_dark th {
+    color: #00ad5f;
+    font-size: 12px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    background-color: #393939;
+    padding: 18px 20px;
+    white-space: nowrap;
+  }
+
+  .table_dark td {
+    font-size: 12px;
+    color: #808080;
+    background-color: #222222;
+    padding: 5px 5px;
+    text-align: center;
+  }
+
+.nun {
+  display: none;
+}
+}
+
+
+

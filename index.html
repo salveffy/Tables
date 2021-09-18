@@ -8,13 +8,14 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="content">
-      <ul class="blockVis">
-        <li class="active">Имя</li>
-        <li class="active">Фамилия</li>
-        <li class="active">Описание</li>
-        <li class="active">Цвет глаз</li>
-      </ul>
+  <div class="content">
+    <ul class="blockVis">
+      <li class="active">Имя</li>
+      <li class="active">Фамилия</li>
+      <li class="active">Описание</li>
+      <li class="active">Цвет глаз</li>
+    </ul>
+    <div>
       <div class="container">
         <table class="table_dark">
           <thead>
@@ -32,26 +33,30 @@
     </div>
     <div id="form" class="content nun"> <!--Форма для редактирования-->
     <div class="container">
-    <table class="table_dark">
-      <thead>
-        <tr>
-          <th>Имя</th>
-          <th>Фамилия</th>
-          <th>Описание</th>
-          <th>Цвет глаз</th>
-        </tr>
-      </thead>
-      <tbody>
-        <td><input id="firstName" type="text"></input></td>
-        <td><input id="lastName" type="text"></input></td>
-        <td><textarea id="about" type="text"></textarea></td>
-        <td><input id="eyeColor" type="text"></input></td>
-  </tbody>
-  </table>
-    <div class="pagination">
+    <form action="">
+      <div class="cont">
+        <label for="name">Имя</label>
+        <input id="firstName" type="text"></input>
+      </div>
+      <div class="cont">
+        <label for="name">Фамилия</label>
+        <input id="lastName" type="text"></input>
+      </div>
+      <div class="cont">
+        <label for="name">Описание</label>
+        <textarea id="about" type="text"></textarea>
+      </div>
+      <div class="cont">
+        <label for="name">Цвет глаз</label>
+        <input id="eyeColor" type="text"></input>
+      </div>
+          <div class="pagination">
       <li class="correct">Сохранить</li>
       <li class="cancel">Отменить</li>
     </div>
+    </form>
+
+</div>
 </div>
 </div>
     <script src="./script.js"></script>
